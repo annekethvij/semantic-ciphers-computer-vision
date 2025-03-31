@@ -126,4 +126,43 @@ All photos from Pexels are free to use under their license, which allows:
 
 The full license can be found on the [Pexels License page](https://www.pexels.com/license/).
 
+
+## Citation and Publication Policy
+
+If you use this project in your research, please cite it as:
+
+```
+Vij, A., Pandiyan, M.N., Nehrudass, P.  
+Department of Computer Science  
+University of Southern California  
+Los Angeles, CA 90007  
+[anneketh, maruthup, nehrudas]@usc.edu
+```
+
+# Publication Rights
+
+1. Any publications, papers, presentations, or other academic/research works that use or are based on this codebase MUST:
+   - Obtain explicit written approval from repo owners/collaboratos
+   - Acknowledge the use of this codebase with proper citation
+
+2. These requirements apply to:
+   - Direct use of the code
+   - Derivative works
+   - Results obtained using this codebase
+   - Methodologies or algorithms implemented in this codebase
+
+3. Failure to comply with these terms constitutes both:
+   - A violation of the software license
+   - Academic misconduct/ethics violation
+  
+Copyright (c) 2025
+
+All rights reserved.
+
+No part of this software, including but not limited to the source code and documentation, may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the copyright holder.
+
+For permission requests, please contact the repository owner.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 ---
