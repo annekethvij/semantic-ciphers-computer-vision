@@ -110,4 +110,20 @@ This implementation is based on the following approach:
 - FaceNet PyTorch
 - CLIP
 
+## Image Credits
+
+This project uses free images from [Pexels](https://www.pexels.com/), a platform that provides free stock photos and videos for personal and commercial use.
+
+Example images used in testing and demonstrations include:
+- [Man in Black Polo Shirt Holding Tennis Racket](https://www.pexels.com/photo/man-in-black-polo-shirt-holding-tennis-racket-5739122/)
+
+### Pexels License
+
+All photos from Pexels are free to use under their license, which allows:
+- Free use for commercial and non-commercial purposes
+- No attribution required (though always appreciated)
+- Modification of the photos as needed
+
+The full license can be found on the [Pexels License page](https://www.pexels.com/license/).
+
 ---
