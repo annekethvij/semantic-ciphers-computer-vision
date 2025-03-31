@@ -38,12 +38,32 @@ def run_example():
     for i, (result, level) in enumerate(zip(results, privacy_levels)):
         recon_img = Image.open(result['reconstructed_image'])
         axes[i + 1].imshow(np.array(recon_img))
+        
+
+        orig_size_kb = result['original_size_bytes'] / 1024
+        latent_size_kb = result['latent_size_bytes'] / 1024
+        
+        if orig_size_kb > 1024:
+            orig_size_str = f"{orig_size_kb/1024:.2f} MB"
+        else:
+            orig_size_str = f"{orig_size_kb:.2f} KB"
+            
+        if latent_size_kb > 1024:
+            latent_size_str = f"{latent_size_kb/1024:.2f} MB"
+        else:
+            latent_size_str = f"{latent_size_kb:.2f} KB"
+        
+
+        compression_ratio = result['original_size_bytes'] / result['latent_size_bytes']
+        
         axes[i + 1].set_title(f"Privacy Level: {level}\n"
                              f"ID Score: {result['identity_preservation']:.2f}\n"
-                             f"Semantic Score: {result['semantic_similarity']:.2f}")
+                             f"Semantic Score: {result['semantic_similarity']:.2f}\n"
+                             f"Orig: {orig_size_str} → Latent: {latent_size_str}\n"
+                             f"Compression: {compression_ratio:.1f}x")
         axes[i + 1].axis('off')
     
-    plt.tight_layout()
+    plt.tight_layout(pad=4.0)
     plt.savefig(os.path.join(output_dir, "privacy_comparison.png"))
     print(f"Comparison saved to {os.path.join(output_dir, 'privacy_comparison.png')}")
     
