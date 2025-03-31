@@ -77,10 +77,26 @@ def run_example():
     
     print("\nMetrics for different privacy levels:")
     for i, (result, level) in enumerate(zip(results, privacy_levels)):
+        orig_size_kb = result['original_size_bytes'] / 1024
+        latent_size_kb = result['latent_size_bytes'] / 1024
+        
+        if orig_size_kb > 1024:
+            orig_size_str = f"{orig_size_kb/1024:.2f} MB"
+        else:
+            orig_size_str = f"{orig_size_kb:.2f} KB"
+            
+        if latent_size_kb > 1024:
+            latent_size_str = f"{latent_size_kb/1024:.2f} MB"
+        else:
+            latent_size_str = f"{latent_size_kb:.2f} KB"
+            
+        compression_ratio = result['original_size_bytes'] / result['latent_size_bytes']
+        
         print(f"\nPrivacy Level {level}:")
         print(f"  Identity Score: {result['identity_preservation']:.3f} (lower = better privacy)")
         print(f"  Semantic Score: {result['semantic_similarity']:.3f} (higher = better content)")
-        print(f"  Compression Ratio: {result['compression_ratio']:.2f}x")
+        print(f"  Original Size: {orig_size_str}, Latent Size: {latent_size_str}")
+        print(f"  Compression Ratio: {compression_ratio:.2f}x")
 
 if __name__ == "__main__":
     run_example()
