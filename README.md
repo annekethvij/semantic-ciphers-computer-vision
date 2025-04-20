@@ -11,6 +11,8 @@ This project implements a "Semantic Image Cipher" that uses deep learning to tra
 
 Built using Stable Diffusion's latent space, this tool offers an alternative to traditional image anonymization methods like blurring or pixelation by producing more natural-looking results.
 
+For the full detailed architecture diagram, see [semantic-ciphers-architecture](docs/improved_architecture_cv.mmd).
+
 ## Features
 
 - **Privacy Protection**: Transforms facial features to prevent recognition
