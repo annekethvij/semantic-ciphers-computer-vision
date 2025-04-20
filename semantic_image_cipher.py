@@ -43,29 +43,49 @@ class SemanticImageCipher:
         return latents, face_masks, image
 
     def apply_semantic_cipher(self, latents, face_masks, noise_level=0.8, content_preservation=0.7):
-        noise = torch.randn_like(latents) * noise_level
-        face_noise = noise * face_masks
-        content_noise = noise * (1 - face_masks) * (1 - content_preservation)
+        structured_noise = torch.randn_like(latents)
+        smoothed_noise = torch.nn.functional.avg_pool2d(structured_noise, kernel_size=3, stride=1, padding=1)
+        face_noise = smoothed_noise * face_masks * noise_level
+        content_factor = 1.0 - content_preservation
+        content_noise = smoothed_noise * (1 - face_masks) * content_factor * 0.3
         ciphered_latents = latents.clone()
-        ciphered_latents = ciphered_latents + face_noise + content_noise
+        face_regions = latents * face_masks
+        face_mean = torch.mean(face_regions[face_regions != 0]) if torch.sum(face_masks) > 0 else 0
+        face_std = torch.std(face_regions[face_regions != 0]) if torch.sum(face_masks) > 0 else 1
+        normalized_face_regions = (face_regions - face_mean) / (face_std + 1e-6)
+        transformed_face_regions = normalized_face_regions + face_noise
+        transformed_face_regions = transformed_face_regions * face_std + face_mean
+        ciphered_latents = (latents * (1 - face_masks)) + transformed_face_regions + content_noise
         return ciphered_latents
 
-    def decode_image(self, latents, guidance_scale=7.5, num_inference_steps=50):
+    def decode_image(self, latents, guidance_scale=7.5, num_inference_steps=50, scene_preservation=0.7):
+        with torch.no_grad():
+            direct_decoded = self.vae.decode(latents / 0.18215).sample
+            direct_decoded = (direct_decoded / 2 + 0.5).clamp(0, 1)
+            direct_decoded_np = direct_decoded.detach().cpu().permute(0, 2, 3, 1).numpy()[0]
+            direct_decoded_pil = Image.fromarray((direct_decoded_np * 255).round().astype("uint8"))
         self.sd_pipeline.scheduler.set_timesteps(num_inference_steps)
-        t = self.sd_pipeline.scheduler.timesteps[0]
-        noisy_latents = self.sd_pipeline.scheduler.add_noise(
-            latents, 
-            torch.randn_like(latents), 
-            t
-        )
-        prompt = "a photograph of a person in a scene"
-        image = self.sd_pipeline(
-            prompt=prompt,
+        t_identity = int(self.sd_pipeline.scheduler.timesteps[0] * 0.8)
+        face_prompt = "a photograph of a person with a different face, same pose, same background, same clothes"
+        diffusion_result = self.sd_pipeline(
+            prompt=face_prompt,
             guidance_scale=guidance_scale,
             num_inference_steps=num_inference_steps,
-            latents=noisy_latents
+            latents=latents
         ).images[0]
-        return image
+        diffusion_result_np = np.array(diffusion_result)
+        faces, _ = self.face_detector.detect(diffusion_result)
+        blend_mask = np.ones_like(diffusion_result_np) * scene_preservation
+        if faces is not None:
+            for box in faces:
+                x1, y1, x2, y2 = [int(coord) for coord in box]
+                x1, y1 = max(0, x1-10), max(0, y1-10)
+                x2, y2 = min(diffusion_result_np.shape[1], x2+10), min(diffusion_result_np.shape[0], y2+10)
+                blend_mask[y1:y2, x1:x2] = 0.1
+        direct_decoded_np = np.array(direct_decoded_pil)
+        blended = diffusion_result_np * (1 - blend_mask) + direct_decoded_np * blend_mask
+        blended = np.clip(blended, 0, 255).astype(np.uint8)
+        return Image.fromarray(blended)
 
     def save_latents(self, latents, output_path):
         torch.save(latents, output_path)
@@ -119,14 +139,18 @@ class SemanticImageCipher:
         similarity = F.cosine_similarity(embedding1, embedding2).item()
         return similarity
 
-    def process_image(self, image_path, output_dir="output", noise_level=0.8, content_preservation=0.7, save_intermediates=False):
+    def process_image(self, image_path, output_dir="output", noise_level=0.8, content_preservation=0.7, scene_preservation=0.7, save_intermediates=False):
         os.makedirs(output_dir, exist_ok=True)
         base_name = os.path.splitext(os.path.basename(image_path))[0]
         latents, face_masks, original_image = self.encode_image(image_path)
         ciphered_latents = self.apply_semantic_cipher(latents, face_masks, noise_level, content_preservation)
         latent_path = os.path.join(output_dir, f"{base_name}_latents.pt")
         self.save_latents(ciphered_latents, latent_path)
-        reconstructed_image = self.decode_image(ciphered_latents)
+        if save_intermediates:
+            face_mask_viz = face_masks.cpu().numpy()[0, 0] * 255
+            face_mask_path = os.path.join(output_dir, f"{base_name}_face_mask.png")
+            Image.fromarray(face_mask_viz.astype(np.uint8)).save(face_mask_path)
+        reconstructed_image = self.decode_image(ciphered_latents, scene_preservation=scene_preservation)
         reconstructed_path = os.path.join(output_dir, f"{base_name}_reconstructed.png")
         reconstructed_image.save(reconstructed_path)
         identity_score = self.measure_identity_preservation(original_image, reconstructed_image)
@@ -173,13 +197,7 @@ class SemanticImageCipher:
 
 def main():
     cipher = SemanticImageCipher(device="cuda" if torch.cuda.is_available() else "cpu")
-    result = cipher.process_image(
-        "path/to/your/image.jpg",
-        output_dir="output",
-        noise_level=0.8,
-        content_preservation=0.7,
-        save_intermediates=True
-    )
+    result = cipher.process_image("path/to/your/image.jpg", output_dir="output", noise_level=0.8, content_preservation=0.7, save_intermediates=True)
     print("Results:")
     print(f"Original image: {result['original_image']}")
     print(f"Latent representation: {result['latent_representation']}")
@@ -193,3 +211,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
