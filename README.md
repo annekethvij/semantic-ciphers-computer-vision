@@ -60,7 +60,7 @@ print(f"Semantic similarity score: {result['semantic_similarity']}")
 
 ## Example Results
 
-[To be Added here]
+For the full detailed results, see [results](results/results_improved_version2).
 
 ## Storing and Loading Ciphers
 
