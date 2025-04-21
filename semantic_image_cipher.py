@@ -216,7 +216,7 @@ class SemanticImageCipher:
 
 def main():
     cipher = SemanticImageCipher(device="cuda" if torch.cuda.is_available() else "cpu")
-    result = cipher.process_image("Inputs\pexels-cottonbro-5739122.jpg", output_dir="output", noise_level=0.8, content_preservation=0.7, save_intermediates=True)
+    result = cipher.process_image("path/to/your/image.jpg", output_dir="output", noise_level=0.8, content_preservation=0.7, save_intermediates=True)
     print("Results:")
     print(f"Original image: {result['original_image']}")
     print(f"Latent representation: {result['latent_representation']}")

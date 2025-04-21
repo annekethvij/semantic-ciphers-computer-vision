@@ -1,3 +1,4 @@
+import torch
 from semantic_image_cipher import SemanticImageCipher
 import os
 import torch

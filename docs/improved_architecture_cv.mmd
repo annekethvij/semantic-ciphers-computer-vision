@@ -1,0 +1,61 @@
+flowchart TD
+    classDef inputClass fill:#a8d5ff,stroke:#2980b9,stroke-width:2px,color:black
+    classDef faceClass fill:#b8c9f1,stroke:#4055a5,stroke-width:2px,color:black
+    classDef encodeClass fill:#c5a8f2,stroke:#8e44ad,stroke-width:2px,color:black
+    classDef latentClass fill:#f2a8e4,stroke:#c2185b,stroke-width:2px,color:black
+    classDef noiseClass fill:#f2c5a8,stroke:#e67e22,stroke-width:2px,color:black
+    classDef decodeClass fill:#b0f2a8,stroke:#27ae60,stroke-width:2px,color:black
+    classDef blendClass fill:#d1f2a8,stroke:#7cb342,stroke-width:2px,color:black
+    classDef outputClass fill:#a8f2e0,stroke:#16a085,stroke-width:2px,color:black
+    classDef evalClass fill:#f2f0a8,stroke:#f1c40f,stroke-width:2px,color:black
+    classDef storageClass fill:#f2a8a8,stroke:#c0392b,stroke-width:2px,color:black
+
+    A[Input Image<br>RGB Portrait] -->|MTCNN| B[Face Detection<br>Identify Regions]
+    B --> C[VAE Encoder<br>Stable Diffusion]
+    C --> D[Latent Representation<br>64×64×4 Tensor]
+    D --> E{Apply Semantic Cipher}
+    
+    F[Face Masks<br>Binary Regions] --> E
+    G[Structured Noise<br>with Smoothing] --> E
+    H[Content Preservation<br>Parameter] --> E
+    
+    E --> I[Modified Latents<br>Privacy-Preserved]
+    
+    I --> J1[Direct VAE Decoder<br>Structure Preservation]
+    I --> J2[Guided Diffusion<br>Identity Transformation]
+    
+    J1 --> K{Intelligent Blending}
+    J2 --> K
+    F --> K
+    S[Scene Preservation<br>Parameter] --> K
+    
+    K --> L[Blended Output<br>Privacy+Context]
+    
+    I -.-> M[(Store Latents<br>30-50KB)]
+    M -.-> I
+    
+    L --> N[Identity Evaluation<br>FaceNet Embeddings]
+    L --> O[Semantic Evaluation<br>CLIP Similarity]
+    
+    N --> P[Identity Score<br>lower = better privacy]
+    O --> Q[Semantic Score<br>higher = better content]
+    
+    A:::inputClass
+    B:::faceClass
+    C:::encodeClass
+    D:::latentClass
+    E:::noiseClass
+    F:::faceClass
+    G:::noiseClass
+    H:::noiseClass
+    I:::latentClass
+    J1:::decodeClass
+    J2:::decodeClass
+    K:::blendClass
+    L:::outputClass
+    M:::storageClass
+    N:::evalClass
+    O:::evalClass
+    P:::evalClass
+    Q:::evalClass
+    S:::blendClass
