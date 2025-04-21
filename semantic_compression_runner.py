@@ -1,3 +1,4 @@
+import torch
 from semantic_image_cipher import SemanticImageCipher
 import os
 import torch
@@ -120,4 +121,3 @@ def run_advanced_example():
 
 if __name__ == "__main__":
     run_advanced_example()
-
