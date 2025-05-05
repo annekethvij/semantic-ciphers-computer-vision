@@ -15,7 +15,7 @@ class SemanticImageCipher:
         self.device = device if torch.cuda.is_available() and device == "cuda" else "cpu"
         print(f"Using device: {self.device}")
         self.vae = AutoencoderKL.from_pretrained(sd_model_id, subfolder="vae").to(self.device)
-        self.sd_pipeline = StableDiffusionImg2ImgPipeline.from_pretrained(sd_model_id,torch_dtype=torch.float16).to(self.device)
+        self.sd_pipeline = StableDiffusionImg2ImgPipeline.from_pretrained(sd_model_id,torch_dtype=torch.float32).to(self.device)
         self.sd_pipeline.enable_attention_slicing()
         self.face_detector = MTCNN(keep_all=True, device=self.device)
         self.face_recognizer = InceptionResnetV1(pretrained='vggface2').eval().to(self.device)

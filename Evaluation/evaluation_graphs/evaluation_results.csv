@@ -1,0 +1,2 @@
+original_path,compressed_path,original_size,compressed_size,compression_ratio,bpp,identity_score,semantic_score
+original_image\image.png,compressed_image\image.png,338165,382476,0.8841469791568621,9.9603125,0.2,0.6902647018432617

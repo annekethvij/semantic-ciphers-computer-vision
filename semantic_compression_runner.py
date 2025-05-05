@@ -55,7 +55,7 @@ def print_analysis_results(param_values, results, param_name):
 
 def run_advanced_example():
     input_image = "/home/ubuntu/projects/pexels-cottonbro-5739122.jpg"
-    output_dir = "results_improved"
+    output_dir = "eval_out" # changed to eval_out for evaluation
     os.makedirs(output_dir, exist_ok=True)
     
     print("Initializing Semantic Image Cipher...")
